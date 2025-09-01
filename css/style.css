@@ -1,0 +1,8 @@
+ .paginate-btn.active{
+         background-color: cyan !important;
+         color: white;
+      }
+      
+      h1{
+        color:red;
+      }
