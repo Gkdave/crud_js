@@ -1,8 +1,10 @@
 let regForm = document.querySelector('.register-form'); 
 let allInput=regForm.querySelectorAll('INPUT');
+let allBtn=regForm.querySelectorAll('button');
 let closeBtn =document.querySelector(".btn-close");
 let regList =document.querySelector(".reg-list");
-
+let modalBtn = document.getElementById("#myModal");
+let addBtn =document.querySelector(".add-btn");
 
 
 let allRegData=[];
@@ -44,7 +46,11 @@ regForm.onsubmit = (e)=>{
 
 const getRegData = ()=>{
     regList.innerHTML="";
-    allRegData.forEach((data,index)=>{
+    let filter = allRegData.slice();
+    // console.log(filter)
+    filter.forEach((data,index)=>{
+        let dataStr = JSON.stringify(data);
+        let finalData = dataStr.replace(/"/g,"'")
             regList.innerHTML += `
             <tr>
                 <td>${index+1}</td>
@@ -56,7 +62,7 @@ const getRegData = ()=>{
                 <td>${data.mobile}</td>
                 <td>${data.passoword}</td>
                 <td>
-                     <button data="${data}"  index="${index}" class="edit-btn btn btn-primary p-1 px-2"><i class="fa fa-edit"></i></button>
+                     <button data="${finalData}"  index="${index}" class="edit-btn btn btn-primary p-1 px-2"><i class="fa fa-edit"></i></button>
                      <button index="${index}" class="del-btn btn btn-danger p-1 px-2"><i class="fa fa-trash"></i></button>
                      
                 </td>
@@ -85,11 +91,54 @@ for(let btn of allDelBtn){
         }
 }
 
+//Edit Coding 
+let allEditBtn = regList.querySelectorAll(".edit-btn");
+for(let btn of allEditBtn){
+    btn.onclick =()=>{
+        let index = btn.getAttribute("index");
+        let dataStr=btn.getAttribute("data");
+        let finalData=dataStr.replace(/'/g,'"');
+        let data = JSON.parse(finalData);
+        console.log(data);
+        addBtn.click();
+        allInput[0].value=data.name;
+        // console.log(data.name);
+        allInput[1].value=data.email;
+        allInput[2].value=data.mobile;
+        allInput[3].value=data.dob;
+        allInput[4].value=data.passoword;
+        url=data.profile;
+        allBtn[0].disabled=false;
+        allBtn[1].disabled=true;
 
+        allBtn[0].onclick=()=>{
+           allRegData[index]={
+                name:allInput[0].value,
+                email:allInput[1].value,
+                mobile:allInput[2].value,
+                dob:allInput[3].value,
+                profile: url == "" ? "/img/download.png" : url,
+      
+    }
+    localStorage.setItem("allRegData",JSON.stringify(allRegData));
+        swal("Data Updated"," Successfully","success"); 
+        closeBtn.click(); 
+        regForm.reset(); 
+        getRegData();
+        allBtn[0].disabled=true;
+        allBtn[1].disabled=false;
+        }
+    }
+
+}
 
 }
 
 getRegData();
+
+
+
+
 //Reading profile Photo
 allInput[5].onchange = ()=>{
     let freader = new FileReader();  
