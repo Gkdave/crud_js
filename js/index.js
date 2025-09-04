@@ -4,6 +4,7 @@ let closeBtn =document.querySelector(".btn-close");
 let regList =document.querySelector(".reg-list");
 
 
+
 let allRegData=[];
 
 let url = "";
@@ -19,17 +20,17 @@ regForm.onsubmit = (e)=>{
     e.preventDefault(); // preventing form from submitting
     let checkEmail = allRegData.find((data)=>data.email == allInput[1].value);
     if(checkEmail == undefined){
-    allRegData.push({
-    name: allInput[0].value,
-    email:allInput[1].value,
-    mobile:allInput[2].value,
-    dob:allInput[3].value,
-    passoword:allInput[4].value,
-    profile: url == "" ? "/img/download.png" : url, 
+        allRegData.push({
+        name: allInput[0].value,
+        email:allInput[1].value,
+        mobile:allInput[2].value,
+        dob:allInput[3].value,
+        passoword:allInput[4].value,
+        profile: url == "" ? "/img/download.png" : url, 
     
     });
     localStorage.setItem('allRegData',JSON.stringify(allRegData));
-        Swal.fire({"Data inserted successfully", "You clicked the button!", "success"});
+        swal("Data inserted successfully", "You clicked the button!", "success");
         closeBtn.click();
         regForm.reset("");
         getRegData();
@@ -69,27 +70,21 @@ const getRegData = ()=>{
 
 //Delete Coding
 const action=()=>{
-    //delet Coding 
+    //delete Coding 
 
-   let allDelBtn =document.querySelectorAll(".del-btn");
-   for(let btn of allDelBtn){
-    btn.onclick= async ()=>{
-        let index = btn.getAttribute("index");
-        let isConfirm = await confirm();
-        
-        if(isConfirm)
-        {
-            allRegData.splice(index,1);
-            localStorage.setItem("allRegData",JSON.stringify(allRegData));
-            getRegData();
-        }
-        // catch(error){
-        //     alert(error);
-        // }
-        
-        
+    let allDelBtn = regList.querySelectorAll(".del-btn");
+    for(let btn of allDelBtn){
+        btn.onclick = async ()=>{
+                let index = btn.getAttribute("index");
+                let isConfirm = await confirm();
+                if(isConfirm){
+                    allRegData.splice(index,1);
+                    localStorage.setItem("allRegData",JSON.stringify(allRegData));
+                    getRegData();
+                }
+            }
     }
-   }
+
 }
 
 getRegData();
@@ -103,34 +98,21 @@ allInput[5].onchange = ()=>{
     }
 }   
 
+
 //let confirm 
 
-const confirm =()=>{
+const confirm =() =>{
     return new Promise((resolve,reject)=>{
-        Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
-        }).then((result) => {
-        if (result) {
-            resolve(true);
-            Swal.fire({
-            title: "Deleted!",
-            text: "Your file has been deleted.",
-            icon: "success"
-            });
-            } else {
-                reject(false);
-                swal("Your imaginary file is safe");
+        swal({
+            title:"Are you sure ?",
+            text:"Once dleted,you were not able to restro it"
+        }).then((willdelete)={
+            if(willdelete){
+                resolve(true);
+                swal("file has been deleted",{
+                    icon:"success",
+                });
             }
-});
-    });
-
+        })
+    })
 }
-
-
-    
