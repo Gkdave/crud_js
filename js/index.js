@@ -72,18 +72,20 @@ const getRegData = ()=>{
 const action=()=>{
     //delete Coding 
 
-    let allDelBtn = regList.querySelectorAll(".del-btn");
-    for(let btn of allDelBtn){
-        btn.onclick = async ()=>{
-                let index = btn.getAttribute("index");
-                let isConfirm = await confirm();
-                if(isConfirm){
-                    allRegData.splice(index,1);
-                    localStorage.setItem("allRegData",JSON.stringify(allRegData));
-                    getRegData();
-                }
+let allDelBtn = regList.querySelectorAll(".del-btn");
+for(let btn of allDelBtn){
+    btn.onclick = async ()=>{
+            let index = btn.getAttribute("index");
+            let isConfirm = await confirm();
+            if(isConfirm){
+                allRegData.splice(index,1);
+                localStorage.setItem("allRegData",JSON.stringify(allRegData));
+                getRegData();
             }
-    }
+        }
+}
+
+
 
 }
 
@@ -101,18 +103,27 @@ allInput[5].onchange = ()=>{
 
 //let confirm 
 
-const confirm =() =>{
+const confirm =()=>{
     return new Promise((resolve,reject)=>{
         swal({
             title:"Are you sure ?",
-            text:"Once dleted,you were not able to restro it"
-        }).then((willdelete)={
-            if(willdelete){
+            text:"Once deleted, you will not be able to recover!",
+            icon:"Warning",
+            buttons:true,
+            dangerMode:true,
+        })
+        .then((willDelete) => {
+            if(willDelete){
                 resolve(true);
-                swal("file has been deleted",{
+                swal("Poof! Your imaginary file has been deleted.", {
                     icon:"success",
                 });
+
+            }else{
+                reject(false);
+                swal("Your imaginary file is safe!");
+
             }
         })
-    })
+    });
 }
