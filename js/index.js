@@ -7,6 +7,7 @@ let modalBtn = document.getElementById("#myModal");
 let addBtn =document.querySelector(".add-btn");
 let searchEl =document.querySelector(".search");
 let delAllBtn =document.querySelector(".delete-all-btn");
+let paginationBox=document.querySelector(".pagination-box");
 
 let allRegData=[];
 
@@ -28,14 +29,14 @@ regForm.onsubmit = (e)=>{
         mobile:allInput[2].value,
         dob:allInput[3].value,
         passoword:allInput[4].value,
-        profile: url == "" ? "img/LogoC.png" : url, 
+        profile:url == "" ? "LogoC.png" : url, 
     
     });
     localStorage.setItem('allRegData',JSON.stringify(allRegData));
         swal("Data inserted successfully", "You clicked the button!", "success");
         closeBtn.click();
         regForm.reset("");
-        getRegData();
+        getRegData(0,5);
     }
     else
     {
@@ -44,13 +45,13 @@ regForm.onsubmit = (e)=>{
 
 }
 
-const getRegData = ()=>{
+const getRegData = (from,to)=>{
     regList.innerHTML="";
-    let filter = allRegData.slice();
-    // console.log(filter)
+    let filter = allRegData.slice(from,to);
+    // console.log(filter);
     filter.forEach((data,index)=>{
         let dataStr = JSON.stringify(data);
-        let finalData = dataStr.replace(/"/g,"'")
+        let finalData = dataStr.replace(/"/g,"'");
             regList.innerHTML += `
             <tr>
                 <td>${index+1}</td>
@@ -69,8 +70,8 @@ const getRegData = ()=>{
                 </td>
             </tr>`;
     });
-   
-    action();
+action();
+
 }
 
 
@@ -78,66 +79,62 @@ const getRegData = ()=>{
 const action=()=>{
     //delete Coding 
 
-let allDelBtn = regList.querySelectorAll(".del-btn");
-for(let btn of allDelBtn){
-    btn.onclick = async ()=>{
-            let index = btn.getAttribute("index");
-            let isConfirm = await confirm();
-            if(isConfirm){
-                allRegData.splice(index,1);
-                localStorage.setItem("allRegData",JSON.stringify(allRegData));
-                getRegData();
+    let allDelBtn = regList.querySelectorAll(".del-btn");
+    for(let btn of allDelBtn){
+        btn.onclick = async ()=>{
+                let index = btn.getAttribute("index");
+                let isConfirm = await confirm();
+                if(isConfirm){
+                    allRegData.splice(index,1);
+                    localStorage.setItem("allRegData",JSON.stringify(allRegData));
+                    getRegData();
+                }
             }
         }
-}
 
-//Edit Coding 
-let allEditBtn = regList.querySelectorAll(".edit-btn");
-for(let btn of allEditBtn){
-    btn.onclick =()=>{
-        let index = btn.getAttribute("index");
-        let dataStr=btn.getAttribute("data");
-        let finalData=dataStr.replace(/'/g,'"');
-        let data = JSON.parse(finalData);
-        console.log(data);
-        addBtn.click();
-        allInput[0].value=data.name;
-        // console.log(data.name);
-        allInput[1].value=data.email;
-        allInput[2].value=data.mobile;
-        allInput[3].value=data.dob;
-        allInput[4].value=data.password;
-        url=data.profile;
-        allBtn[0].disabled=false;
-        allBtn[1].disabled=true;
+    //Edit Coding 
+    let allEditBtn = regList.querySelectorAll(".edit-btn");
+    for(let btn of allEditBtn){
+        btn.onclick =()=>{
+            let index = btn.getAttribute("index");
+            let dataStr=btn.getAttribute("data");
+            let finalData=dataStr.replace(/'/g,'"');
+            let data = JSON.parse(finalData);
+            console.log(data);
+            addBtn.click();
+            allInput[0].value=data.name;
+            // console.log(data.name);
+            allInput[1].value=data.email;
+            allInput[2].value=data.mobile;
+            allInput[3].value=data.dob;
+            allInput[4].value=data.password;
+            url=data.profile;
+            allBtn[0].disabled=false;
+            allBtn[1].disabled=true;
 
-        allBtn[0].onclick=()=>{
-           allRegData[index]={
-                name:allInput[0].value,
-                email:allInput[1].value,
-                mobile:allInput[2].value,
-                dob:allInput[3].value,
-                password:allInput[4].value,
-                profile: url == "" ? "img/LogoC.png" : url,
-      
-    }
-    localStorage.setItem("allRegData",JSON.stringify(allRegData));
-        swal("Data Updated"," Successfully","success"); 
-        closeBtn.click(); 
-        regForm.reset(); 
-        getRegData();
-        allBtn[0].disabled=true;
-        allBtn[1].disabled=false;
+            allBtn[0].onclick=()=>{
+            allRegData[index]={
+                    name:allInput[0].value,
+                    email:allInput[1].value,
+                    mobile:allInput[2].value,
+                    dob:allInput[3].value,
+                    password:allInput[4].value,
+                    profile: url == "" ? "img/LogoC.png" : url,
+        
+        }
+        localStorage.setItem("allRegData",JSON.stringify(allRegData));
+            swal("Data Updated"," Successfully","success"); 
+            closeBtn.click(); 
+            regForm.reset(); 
+            getRegData();
+            allBtn[0].disabled=true;
+            allBtn[1].disabled=false;
+            }
         }
     }
-
-}
 }
 
 getRegData();
-
-
-
 
 //Reading profile Photo
 allInput[5].onchange = ()=>{
@@ -145,13 +142,13 @@ allInput[5].onchange = ()=>{
     freader.readAsDataURL(allInput[5].files[0]);
     freader.onload = (e)=>{
         url=e.target.result;
-        console.log(url);
+        // console.log(url);
     }
 }   
 
-// delet all data
+// delete all data
 
-delAllBtn.onclick = async()=>{
+delAllBtn.onclick = async() => {
     // alert();
     let isConfirm = await confirm();
     if(isConfirm){
@@ -195,7 +192,7 @@ searchEl.oninput = ()=>{
 
 const search = ()=>{
     let value=searchEl.value.toLowerCase();
-    // alert(value);
+
     let tr = regList.querySelectorAll("tr");
     let i;
     for(i=0;i<tr.length;i++)
@@ -215,6 +212,38 @@ const search = ()=>{
     else{
         tr[i].style.display ="none";
         }
-}   
-} 
+    }  
+}
+//pagination Coding 
 
+let length = allRegData.length/5;
+let i, dataSkip=0,loadData=5;
+
+if(length.toString().indexOf(".") !=-1){
+    length = length + 1;
+}
+for(i=1;i<length;i++)
+{
+    paginationBox.innerHTML += `<button data-skip="${dataSkip}" load-data="${loadData}"  class="btn paginate-btn">${i}</button>`
+    dataSkip = dataSkip + 5;
+    loadData = loadData + 5;
+}
+
+//pagination 
+
+let allPaginateBtn = paginationBox.querySelectorAll(".paginate-btn");
+allPaginateBtn[0].classList.add("active");
+for(let btn of allPaginateBtn)
+{
+    btn .onclick=()=>{
+        for(let el of allPaginateBtn)
+        {
+            el.classList.remove("active")
+        }
+        btn.classList.add("active")
+        let skip = btn.getAttribute("data-skip");
+        let loaded = btn.getAttribute("load-data");
+
+        getRegData(skip,loaded);
+    }
+}
