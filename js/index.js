@@ -121,14 +121,14 @@ const action=()=>{
                     mobile:allInput[2].value,
                     dob:allInput[3].value,
                     password:allInput[4].value,
-                    profile: url == "" ? "img/LogoC.png" : url,
+                    profile: url == "" ? "/img/LogoC.png" : url,
         
         }
         localStorage.setItem("allRegData",JSON.stringify(allRegData));
             swal("Data Updated"," Successfully","success"); 
             closeBtn.click(); 
             regForm.reset(); 
-            getRegData();
+            getRegData(0,5);
             allBtn[0].disabled=true;
             allBtn[1].disabled=false;
             }
@@ -136,7 +136,7 @@ const action=()=>{
     }
 }
 
-getRegData();
+getRegData(0,5);
 
 //Reading profile Photo
 allInput[5].onchange = ()=>{
