@@ -8,6 +8,8 @@ let addBtn =document.querySelector(".add-btn");
 let searchEl =document.querySelector(".search");
 let delAllBtn =document.querySelector(".delete-all-btn");
 let paginationBox=document.querySelector(".pagination-box");
+let prevBtn=document.querySelector(".prev-btn");
+let nextBtn=document.querySelector(".next-btn");
 
 let allRegData=[];
 
@@ -231,19 +233,70 @@ for(i=1;i<length;i++)
 
 //pagination 
 
-let allPaginateBtn = paginationBox.querySelectorAll(".paginate-btn");
+let allPaginateBtn=paginationBox.querySelectorAll(".paginate-btn");
 allPaginateBtn[0].classList.add("active");
-for(let btn of allPaginateBtn)
-{
-    btn .onclick=()=>{
-        for(let el of allPaginateBtn)
-        {
-            el.classList.remove("active")
+allPaginateBtn.forEach((btn,index)=>{
+     btn.onclick = ()=>{
+        controlPrevAndNext(allPaginateBtn,index);
+        for(let el of allPaginateBtn){
+            el.classList.remove("active");
+            
         }
-        btn.classList.add("active")
+        btn.classList.add("active");
         let skip = btn.getAttribute("data-skip");
         let loaded = btn.getAttribute("load-data");
-
         getRegData(skip,loaded);
     }
+});
+// for(let btn of allPaginateBtn){
+   
+// }
+
+
+//next btn Coding
+
+nextBtn.onclick = ()=>{
+    let currentIndex = 0;
+    allPaginateBtn.forEach((btn,index)=>{
+        if(btn.classList.contains("active"))
+        {
+            currentIndex = index;
+        }
+    });
+    allPaginateBtn[currentIndex+1].click();
+    controlPrevAndNext(allPaginateBtn,currentIndex+1);
 }
+const controlPrevAndNext = (allPaginateBtn,currentIndex)=>{
+    let length = allPaginateBtn.length-1;
+    if(currentIndex == length)
+    {
+        nextBtn.disabled = true;
+        prevBtn.disabled = false;
+    }
+    else if(currentIndex > 0)
+        {
+        prevBtn.disabled=false;
+        nextBtn.disabled=false; 
+    }
+    else
+    {
+        prevBtn.disabled = true; 
+        nextBtn.disabled=false;
+    }
+}
+
+
+//prev btn Coding 
+
+prevBtn.onclick = ()=>{
+    let currentIndex = 0;
+    allPaginateBtn.forEach((btn,index)=>{
+        if(btn.classList.contains("active"))
+        {
+            currentIndex = index;   
+        }
+    });
+    allPaginateBtn[currentIndex-1].click();
+    controlPrevAndNext(allPaginateBtn,currentIndex-1);
+}
+
