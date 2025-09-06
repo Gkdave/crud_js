@@ -5,12 +5,12 @@ let closeBtn =document.querySelector(".btn-close");
 let regList =document.querySelector(".reg-list");
 let modalBtn = document.getElementById("#myModal");
 let addBtn =document.querySelector(".add-btn");
-
+let searchEl =document.querySelector(".search");
+let delAllBtn =document.querySelector(".delete-all-btn");
 
 let allRegData=[];
 
 let url = "";
-
 
 // Stored Data in localStorage 
 if(localStorage.getItem("allRegData") !=null){
@@ -28,7 +28,7 @@ regForm.onsubmit = (e)=>{
         mobile:allInput[2].value,
         dob:allInput[3].value,
         passoword:allInput[4].value,
-        profile: url == "" ? "/img/download.png" : url, 
+        profile: url == "" ? "img/LogoC.png" : url, 
     
     });
     localStorage.setItem('allRegData',JSON.stringify(allRegData));
@@ -55,19 +55,19 @@ const getRegData = ()=>{
             <tr>
                 <td>${index+1}</td>
                 <td>
-                <img src="${data.profile}" width="40" alt="image" style="width: 40px; border-radius: 50%;">
+                <img src="${data.profile}"  alt="profile" style="width: 40px; border-radius: 50%;">
                 </td>
                 <td>${data.name}</td>
                 <td>${data.email}</td>
                 <td>${data.mobile}</td>
+                <td>${data.dob}</td>
                 <td>${data.passoword}</td>
                 <td>
                      <button data="${finalData}"  index="${index}" class="edit-btn btn btn-primary p-1 px-2"><i class="fa fa-edit"></i></button>
                      <button index="${index}" class="del-btn btn btn-danger p-1 px-2"><i class="fa fa-trash"></i></button>
                      
                 </td>
-            </tr>
-                  `
+            </tr>`;
     });
    
     action();
@@ -106,7 +106,7 @@ for(let btn of allEditBtn){
         allInput[1].value=data.email;
         allInput[2].value=data.mobile;
         allInput[3].value=data.dob;
-        allInput[4].value=data.passoword;
+        allInput[4].value=data.password;
         url=data.profile;
         allBtn[0].disabled=false;
         allBtn[1].disabled=true;
@@ -117,7 +117,8 @@ for(let btn of allEditBtn){
                 email:allInput[1].value,
                 mobile:allInput[2].value,
                 dob:allInput[3].value,
-                profile: url == "" ? "/img/download.png" : url,
+                password:allInput[4].value,
+                profile: url == "" ? "img/LogoC.png" : url,
       
     }
     localStorage.setItem("allRegData",JSON.stringify(allRegData));
@@ -131,7 +132,6 @@ for(let btn of allEditBtn){
     }
 
 }
-
 }
 
 getRegData();
@@ -149,7 +149,17 @@ allInput[5].onchange = ()=>{
     }
 }   
 
+// delet all data
 
+delAllBtn.onclick = async()=>{
+    // alert();
+    let isConfirm = await confirm();
+    if(isConfirm){
+        allRegData = [];
+        localStorage.removeItem("allRegData");
+        getRegData();
+    }
+}
 //let confirm 
 
 const confirm =()=>{
@@ -157,7 +167,7 @@ const confirm =()=>{
         swal({
             title:"Are you sure ?",
             text:"Once deleted, you will not be able to recover!",
-            icon:"Warning",
+            icon:"warning",
             buttons:true,
             dangerMode:true,
         })
@@ -176,3 +186,35 @@ const confirm =()=>{
         })
     });
 }
+
+//searching data
+
+searchEl.oninput = ()=>{
+    search();
+}
+
+const search = ()=>{
+    let value=searchEl.value.toLowerCase();
+    // alert(value);
+    let tr = regList.querySelectorAll("tr");
+    let i;
+    for(i=0;i<tr.length;i++)
+    {
+        let allTd=tr[i].querySelectorAll("TD");
+        let name=allTd[2].innerHTML;
+        let email=allTd[3].innerHTML;
+        let mobile=allTd[4].innerHTML;
+        if(name.toLowerCase().indexOf(value) != -1){
+            tr[i].style.display="";
+        }else if(email.toLowerCase().indexOf(value) != -1){
+        tr[i].style.display=""; 
+    }
+    else if(mobile.toLowerCase().indexOf(value) != -1){
+        tr[i].style.display=""; 
+    }
+    else{
+        tr[i].style.display ="none";
+        }
+}   
+} 
+
